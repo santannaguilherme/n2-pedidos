@@ -34,7 +34,6 @@ export default function Product() {
     const select = data.map((c) => {
       return { label: c.value, value: c.value };
     });
-    console.log(select);
     setCategories(select);
   }
   useEffect(() => {
@@ -51,11 +50,8 @@ export default function Product() {
     try {
       let resposta = await addProduct(obj);
 
-      if (resposta) Alert.alert("adicionado com sucesso!");
-      else Alert.alert("Falhou miseravelmente!");
+      if (resposta) navigation.navigate("Home");
 
-      Keyboard.dismiss();
-      console.log(await getAllProducts());
     } catch (e) {
       Alert.alert(e);
     }
@@ -68,11 +64,13 @@ export default function Product() {
       <View>
         <TextInput
           label="Nome"
+          mode="outlined"
           value={description}
           onChangeText={(text) => setDescription(text)}
         />
         <TextInput
           label="Preço"
+          mode="outlined"
           value={price}
           onChangeText={(text) => setPrice(text)}
         />

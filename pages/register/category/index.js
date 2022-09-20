@@ -47,7 +47,6 @@ export default function Category() {
       Alert.alert(e);
     }
 
-    console.log({ type, value }); // salvar no sqlite
   }
 
   return (
@@ -56,6 +55,7 @@ export default function Category() {
         <TextInput
           label="Nome"
           value={value}
+          mode="outlined"
           onChangeText={(text) => setValue(text)}
         />
       </View>

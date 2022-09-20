@@ -6,26 +6,21 @@ import Menu from "./components/menu";
 import Category from "./pages/register/category";
 import Home from "./pages/home";
 import Product from "./pages/register/product";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native";
+import Cart from "./pages/cart";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-  const MyTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: "#fff",
-    },
-  };
 
   return (
-    <NavigationContainer theme={MyTheme}>
+    <NavigationContainer >
       <View style={[styles.container]}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <Stack.Navigator style={styles.stack}>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Category" component={Category} />
             <Stack.Screen name="Product" component={Product} />
+            <Stack.Screen name="Cart" component={Cart} />
           </Stack.Navigator>
         </ScrollView>
         <Menu style={[styles.menu]}></Menu>
@@ -48,9 +43,11 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   scroll: {
-    height: 300,
+    // height: 300,
+    // alignItems: "center",
   },
   stack: {
     backgroundColor: "#fff",
+    
   },
 });
