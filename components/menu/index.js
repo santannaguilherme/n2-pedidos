@@ -42,7 +42,7 @@ export default function Menu() {
         <IconButton
           icon="baguette"
           size={20}
-          onPress={() => console.log("Pressed")}
+          onPress={() => navigation.navigate("Purchases")}
         />
         <Text variant="labelSmall">Pedidos</Text>
       </View>

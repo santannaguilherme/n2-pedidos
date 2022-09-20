@@ -5,12 +5,29 @@ export function getDbConnection() {
   return cx;
 }
 
-export async function createTableProduct() {
+export async function dropTable() {
+  return new Promise((resolve, reject) => {
+    const query = `DROP TABLE tbPurchases`;
+
+    let dbCx = getDbConnection();
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(query, [], (tx, resultado) => resolve(true));
+      },
+      (error) => {
+        console.log(error);
+        resolve(false);
+      }
+    );
+  });
+}
+export async function createTablePurchases() {
   return new Promise((resolve, reject) => {
     const query = `CREATE TABLE IF NOT EXISTS tbPurchases
     (
       code text not null primary key,
       purchase text not null,
+      date text not null
   )`;
 
     let dbCx = getDbConnection();
@@ -39,6 +56,7 @@ export function getAllPurchases() {
             let obj = {
               code: registros.rows.item(n).code,
               purchase: registros.rows.item(n).purchase,
+              date: registros.rows.item(n).date,
             };
             retorno.push(obj);
           }
@@ -53,17 +71,17 @@ export function getAllPurchases() {
   });
 }
 
-export function addProduct(product) {
+export function addPurchases(product) {
   return new Promise((resolve, reject) => {
     let query =
-      "insert into tbPurchases (code ,purchase) values (?,?)";
+      "insert into tbPurchases (code ,purchase, date) values (?,?,?)";
     let dbCx = getDbConnection();
 
     dbCx.transaction(
       (tx) => {
         tx.executeSql(
           query,
-          [product.code, product.purchase],
+          [product.code, product.purchase, product.date],
           (tx, resultado) => {
             resolve(resultado.rowsAffected > 0);
           }

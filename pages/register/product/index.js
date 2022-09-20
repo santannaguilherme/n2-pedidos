@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { View, Text, Alert, Keyboard } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -6,19 +7,13 @@ import { getAll } from "../category/service/dbService";
 import { addProduct, createTableProduct } from "./service/dbService";
 import styles from "./style";
 
-// const data = [
-//   { label: "Bebida", value: "DRINK" },
-//   { label: "Salgado", value: "FOOD" },
-//   { label: "Doce", value: "CANDY" },
-// ];
-
 export default function Product() {
   const [code, setCode] = useState(null);
   const [description, setDescription] = useState(null);
   const [price, setPrice] = useState(null);
   const [category, setCategory] = useState(null);
   const [categories, setCategories] = useState([]);
-
+  const navigation = useNavigation();
   let tableCreated = false;
   function createUniqueId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(0, 2);

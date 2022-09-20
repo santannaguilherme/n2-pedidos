@@ -8,6 +8,7 @@ import Home from "./pages/home";
 import Product from "./pages/register/product";
 import { ScrollView } from "react-native";
 import Cart from "./pages/cart";
+import Purchases from "./pages/purchases";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -21,6 +22,7 @@ export default function App() {
             <Stack.Screen name="Category" component={Category} />
             <Stack.Screen name="Product" component={Product} />
             <Stack.Screen name="Cart" component={Cart} />
+            <Stack.Screen name="Purchases" component={Purchases} />
           </Stack.Navigator>
         </ScrollView>
         <Menu style={[styles.menu]}></Menu>

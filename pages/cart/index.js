@@ -1,11 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native";
 import { Button, Card, Paragraph, Title } from "react-native-paper";
+import { addPurchases, createTablePurchases, dropTable, getAllPurchases } from "./service/dbService";
 
 export default function Cart() {
   const [products, setProducts] = useState([]);
+  const navigation = useNavigation();
+  let tableCreated = false;
+  async function tableUseEffect() {
+    // await dropTable()
+    if (!tableCreated) {
+      tableCreated = true;
+      await createTablePurchases();
+    }
+  }
+
+
   function createUniqueId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(0, 2);
   }
@@ -14,26 +27,46 @@ export default function Cart() {
     const obj = await AsyncStorage.getItem("@purchases").then((res) => {
       return JSON.parse(res);
     });
-    setProducts(obj);
+    if(obj){
+      setProducts(obj);
+    }else{
+      setProducts([]);
+    }
+    
   }
 
   function p() {
     loadPurchase();
   }
   useEffect(() => {
+    tableUseEffect();
     loadPurchase();
   }, []);
 
-  function buy(){
-    const code = createUniqueId();
+  async function buy() {
     const purchase = JSON.stringify(products)
-    console.log(code,purchase)
+    const code = createUniqueId();
+    var date = (new Date()).toISOString().split('T')[0];
+    let obj = {
+      code,
+      purchase,
+      date
+    };
+    console.log(obj)
+    try {
+      let res = await addPurchases(obj);
+
+      if (res){
+        AsyncStorage.clear()
+        navigation.navigate("Home");
+      } 
+      await getAllPurchases();
+    } catch (e) {
+      Alert.alert(e);
+    }
   }
   return (
     <View>
-      {/* {products.map(product => {
-      <View>{product.toString()}</View>
-     })} */}
       {products.map((element, index) => {
         return (
           <View key={index} style={{ flex: 1 }}>
@@ -44,7 +77,7 @@ export default function Cart() {
                   {element.quantity + " x R$ " + element.product.price}
                 </Paragraph>
               </Card.Content>
-            </Card>{" "}
+            </Card>
           </View>
         );
       })}
