@@ -1,8 +1,9 @@
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, ScrollView } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { TextInput, Button } from "react-native-paper";
-import { add, createTable, getAll } from "./service/dbService";
+import { TextInput, Button, Card, Title, IconButton } from "react-native-paper";
+import { add, createTable, deleteByValue, getAll } from "./service/dbService";
 import styles from "./style";
 
 const data = [
@@ -14,7 +15,8 @@ const data = [
 export default function Category() {
   const [value, setValue] = useState(null);
   const [type, setType] = useState(null);
-
+  const [categories, setCategories] = useState([]);
+  const navigation = useNavigation();
   let tableCreated = false;
   async function tableUseEffect() {
     if (!tableCreated) {
@@ -23,7 +25,8 @@ export default function Category() {
     }
 
     console.log("UseEffect...");
-    await getAll();
+    let res = await getAll();
+    setCategories(res);
   }
   useEffect(() => {
     tableUseEffect();
@@ -38,15 +41,20 @@ export default function Category() {
     try {
       let res = await add(obj);
 
-      if (res) Alert.alert("adicionado com sucesso!");
-      else Alert.alert("Falhou miseravelmente!");
+      if (res) {
+        navigation.navigate("Home");
+      }
 
-      Keyboard.dismiss();
-      await getAll();
+      setCategories(res);
     } catch (e) {
       Alert.alert(e);
     }
+  }
 
+  async function deleteElement(e) {
+    deleteByValue(e.value);
+    let res = await getAll();
+    setCategories(res);
   }
 
   return (
@@ -84,6 +92,26 @@ export default function Category() {
       >
         <Text>Salvar</Text>
       </Button>
+      <ScrollView>
+        {categories.map((element, index) => {
+          return (
+            <View key={index} style={{ flex: 1 }}>
+              <Card>
+                <Card.Content>
+                  <Title>{element.value}</Title>
+                </Card.Content>
+                <Card.Actions>
+                  <IconButton
+                    icon="delete"
+                    size={20}
+                    onPress={() => deleteElement(element)}
+                  />
+                </Card.Actions>
+              </Card>
+            </View>
+          );
+        })}
+      </ScrollView>
     </View>
   );
 }

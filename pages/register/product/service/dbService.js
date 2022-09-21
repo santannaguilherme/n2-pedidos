@@ -80,3 +80,46 @@ export function addProduct(product) {
     );
   });
 }
+export function deleteProductById(id) {
+  return new Promise((resolve, reject) => {
+      let query = 'delete from tbProducts where code=?';
+      let dbCx = getDbConnection();
+
+      dbCx.transaction(tx => {
+          tx.executeSql(query, [id],
+              (tx, resultado) => {
+                  resolve(resultado.rowsAffected > 0);
+              })
+      },
+          error => {
+              console.log(error);
+              resolve(false);
+          }
+      )
+  }
+  );
+}
+
+export function editProduct(product) {
+  console.log("começando o método alteraContato");
+  return new Promise((resolve, reject) => {
+    let query = "update tbProducts set description=?,price=?, category=? where code=?";
+    let dbCx = getDbConnection();
+
+    dbCx.transaction(
+      (tx) => {
+        tx.executeSql(
+          query,
+          [product.description, product.price, product.category,product.code],
+          (tx, resultado) => {
+            resolve(resultado.rowsAffected > 0);
+          }
+        );
+      },
+      (error) => {
+        console.log(error);
+        resolve(false);
+      }
+    );
+  });
+}

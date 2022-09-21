@@ -75,3 +75,23 @@ export function add(categtory) {
     );
   });
 }
+
+export function deleteByValue(value) {
+  return new Promise((resolve, reject) => {
+      let query = 'delete from tbCategories where value=?';
+      let dbCx = getDbConnection();
+
+      dbCx.transaction(tx => {
+          tx.executeSql(query, [value],
+              (tx, resultado) => {
+                  resolve(resultado.rowsAffected > 0);
+              })
+      },
+          error => {
+              console.log(error);
+              resolve(false);
+          }
+      )
+  }
+  );
+}

@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native";
 import { Button, Card, Paragraph, Title } from "react-native-paper";
-import { addPurchases, createTablePurchases, dropTable, getAllPurchases } from "./service/dbService";
+import {
+  addPurchases,
+  createTablePurchases,
+  dropTable,
+  getAllPurchases,
+} from "./service/dbService";
 
-export default function Cart() {
+export default function Cart({ puchases, clearCart }) {
   const [products, setProducts] = useState([]);
   const navigation = useNavigation();
   let tableCreated = false;
@@ -18,21 +23,20 @@ export default function Cart() {
     }
   }
 
-
   function createUniqueId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(0, 2);
   }
 
-  async function loadPurchase() {
-    const obj = await AsyncStorage.getItem("@purchases").then((res) => {
-      return JSON.parse(res);
-    });
-    if(obj){
-      setProducts(obj);
-    }else{
-      setProducts([]);
-    }
-    
+  function loadPurchase() {
+    // const obj = await AsyncStorage.getItem("@purchases").then((res) => {
+    //   return JSON.parse(res);
+    // });
+    // if(obj){
+    console.log(puchases);
+    setProducts(puchases);
+    // }else{
+    //   setProducts([]);
+    // }
   }
 
   function p() {
@@ -44,22 +48,22 @@ export default function Cart() {
   }, []);
 
   async function buy() {
-    const purchase = JSON.stringify(products)
+    const purchase = JSON.stringify(products);
     const code = createUniqueId();
-    var date = (new Date()).toISOString().split('T')[0];
+    var date = new Date().toISOString().split("T")[0];
     let obj = {
       code,
       purchase,
-      date
+      date,
     };
-    console.log(obj)
+    console.log(obj);
     try {
       let res = await addPurchases(obj);
 
-      if (res){
-        AsyncStorage.clear()
+      if (res) {
+        clearCart();
         navigation.navigate("Home");
-      } 
+      }
       await getAllPurchases();
     } catch (e) {
       Alert.alert(e);

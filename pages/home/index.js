@@ -6,11 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from "./style";
 import { Dropdown } from "react-native-element-dropdown";
 import { getAll } from "../register/category/service/dbService";
+import { useIsFocused } from "@react-navigation/native";
 
-export default function Home() {
+export default function Home({ setPurchase, purchase }) {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [purchases, setPurchases] = useState([]);
+  const isFocused = useIsFocused()
 
 
   const [categories, setCategories] = useState([]);
@@ -23,27 +25,28 @@ export default function Home() {
       return { label: c.value, value: c.value };
     });
     setCategories(select);
+    setPurchases(purchase)
   }
   useEffect(() => {
     tableUseEffect();
-  }, []);
+  }, [isFocused]);
 
-  const setPurchase = async (product, quantity) => {
-    let jsonValue = await AsyncStorage.getItem("@purchases");
-    if (jsonValue != null) {
-      const obj = JSON.parse(jsonValue);
-      setPurchases(obj);
-    } else {
-      setPurchases([]);
-    }
+  // const setPurchase = async (product, quantity) => {
+  //   let jsonValue = await AsyncStorage.getItem("@purchases");
+  //   if (jsonValue != null) {
+  //     const obj = JSON.parse(jsonValue);
+  //     setPurchases(obj);
+  //   } else {
+  //     setPurchases([]);
+  //   }
 
-    const a = purchases;
+  //   const a = purchases;
 
-    a.push({ product: product, quantity: quantity })
-    jsonValue = JSON.stringify(a);
-    await AsyncStorage.setItem("@purchases", jsonValue);
+  //   a.push({ product: product, quantity: quantity })
+  //   jsonValue = JSON.stringify(a);
+  //   await AsyncStorage.setItem("@purchases", jsonValue);
 
-  };
+  // };
 
   function filter(category){
     const prod = products.filter(pro => (pro.category ===category))
